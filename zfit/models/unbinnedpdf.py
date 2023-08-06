@@ -11,6 +11,8 @@ from zfit.core.space import supports
 from zfit.models.functor import BaseFunctor
 from zfit.util.ztyping import ExtendedInputType, NormInputType
 from zfit.z import numpy as znp
+from pydantic import Field
+from typing_extensions import Annotated
 
 
 class UnbinnedFromBinnedPDF(BaseFunctor):
@@ -139,4 +141,4 @@ class UnbinnedFromBinnedPDF(BaseFunctor):
 
 
 class TypedSplinePDF(pydantic.BaseModel):
-    order: pydantic.conint(ge=0)
+    order: Annotated[int, Field(ge=0)]

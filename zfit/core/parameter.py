@@ -22,7 +22,7 @@ import tensorflow_probability as tfp
 
 # TF backwards compatibility
 from ordered_set import OrderedSet
-from pydantic import Field, validator
+from pydantic import field_validator, Field
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops.resource_variable_ops import (
@@ -861,7 +861,8 @@ class ParameterRepr(BaseRepr):
     step_size: Optional[float] = None
     floating: Optional[bool] = None
 
-    @validator("value", pre=True)
+    @field_validator("value", mode="before")
+    @classmethod
     def _validate_value(cls, v):
         if cls.orm_mode(v):
             v = v()
@@ -1086,7 +1087,8 @@ class ConstantParamRepr(BaseRepr):
     # lower: Optional[float] = Field(None, alias="min")
     # upper: Optional[float] = Field(None, alias="max")
 
-    @validator("value", pre=True)
+    @field_validator("value", mode="before")
+    @classmethod
     def _validate_value(cls, value):
         if cls.orm_mode(value):
             value = value()
@@ -1193,7 +1195,8 @@ class ComposedParameterRepr(BaseRepr):
     value_fn: str
     params: Dict[str, Serializer.types.ParamTypeDiscriminated]
 
-    @validator("value_fn", pre=True)
+    @field_validator("value_fn", mode="before")
+    @classmethod
     def _validate_value_pre(cls, value):
         if cls.orm_mode(value):
             value = dill.dumps(value).hex()

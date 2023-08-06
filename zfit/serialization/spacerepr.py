@@ -5,7 +5,7 @@ from typing import Tuple, Union, Optional
 
 from typing import Literal
 
-from pydantic import Field, validator, root_validator
+from pydantic import field_validator, model_validator, Field
 
 from .serializer import BaseRepr
 from ..core.space import Space
@@ -24,7 +24,8 @@ class SpaceRepr(BaseRepr):
     upper: Optional[NumericTyped] = Field(alias="max")
     binning: Optional[float] = None  # TODO: binning
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def _validate_pre(cls, values):
         if cls.orm_mode(values):
             if values["n_obs"] > 1:
@@ -37,19 +38,22 @@ class SpaceRepr(BaseRepr):
 
         return values
 
-    @validator("lower", pre=True)
+    @field_validator("lower", mode="before")
+    @classmethod
     def _validate_lower(cls, v):
         if cls.orm_mode(v):
             v = v[0, 0]
         return v
 
-    @validator("upper", pre=True)
+    @field_validator("upper", mode="before")
+    @classmethod
     def _validate_upper(cls, v):
         if cls.orm_mode(v):
             v = v[0, 0]
         return v
 
-    @validator("binning", pre=True, allow_reuse=True)
+    @field_validator("binning", mode="before")
+    @classmethod
     def validate_binning(cls, v):
         if v is not None:
             raise WorkInProgressError("Binning is not implemented yet")

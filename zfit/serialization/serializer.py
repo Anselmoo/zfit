@@ -24,7 +24,7 @@ import numpy as np
 import pydantic
 import tensorflow as tf
 from frozendict import frozendict
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from zfit.util.container import convert_to_container
 
@@ -608,11 +608,14 @@ class BaseRepr(pydantic.BaseModel):
         ):  # TODO: better way to catch if constructor is set vs BaseClass?
             Serializer.register(cls)
 
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-        allow_population_by_field_name = True
-        smart_union = True
+    # TODO[pydantic]: The following keys were removed: `smart_union`.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True,
+        populate_by_name=True,
+        smart_union=True,
+    )
 
     @classmethod
     def orm_mode(cls, v):

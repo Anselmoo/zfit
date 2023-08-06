@@ -137,7 +137,7 @@ class BaseRecursivePolynomialRepr(BasePDFRepr):
     params: Mapping[str, Serializer.types.ParamTypeDiscriminated] = pydantic.Field(
         alias="coeffs"
     )
-    apply_scaling: Optional[bool]
+    apply_scaling: Optional[bool] = None
 
     @pydantic.root_validator(pre=True)
     def convert_params(cls, values):  # does not propagate `params` into the fields

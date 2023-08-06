@@ -5,7 +5,7 @@ from typing import Union, Optional
 
 from typing import Literal
 import pydantic
-from pydantic import Field, root_validator
+from pydantic import model_validator, Field
 
 from .serializer import BaseRepr, Serializer
 
@@ -18,7 +18,8 @@ class BasePDFRepr(BaseRepr):
     # TODO: add norm?
     name: Optional[str] = None
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def convert_params(cls, values):
         if cls.orm_mode(values):
             values = dict(values)
